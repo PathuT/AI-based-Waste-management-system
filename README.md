@@ -36,7 +36,7 @@ Our AI-powered waste management solution optimizes waste collection routes, redu
 1. Connect your mobile device or start an emulator.
 2. Run the app:
     bash
-    flutter run
+ flutter run
     
 
 ## Usage
