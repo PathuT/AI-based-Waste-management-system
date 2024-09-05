@@ -1,0 +1,65 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report, accuracy_score
+from joblib import dump, load
+
+
+# Step 1: Load and Prepare Data
+def load_data(file_path):
+    # Load the dataset (ensure your dataset is in a CSV format)
+    df = pd.read_csv(file_path)
+    
+    # Preprocessing (assuming columns are named 'weight', 'volume', 'moisture', 'type')
+    features = df[['weight', 'volume', 'moisture']]
+    labels = df['type']
+    
+    return train_test_split(features, labels, test_size=0.3, random_state=42)
+
+
+# Step 2: Train the Model
+def train_model(X_train, y_train):
+    # Initialize the Decision Tree Classifier
+    model = DecisionTreeClassifier()
+    
+    # Train the model
+    model.fit(X_train, y_train)
+    
+    # Save the model
+    dump(model, 'waste_classifier_model.joblib')
+    
+    return model
+
+
+# Step 3: Evaluate the Model
+def evaluate_model(model, X_test, y_test):
+    predictions = model.predict(X_test)
+    
+    # Print evaluation metrics
+    print("Classification Report:\n", classification_report(y_test, predictions))
+    print("Accuracy Score:", accuracy_score(y_test, predictions))
+
+
+# Step 4: Predict Waste Type
+def predict_waste_type(model, input_data):
+    prediction = model.predict([input_data])
+    return prediction[0]
+
+
+if __name__ == "__main__":
+    # File path to the dataset
+    file_path = "waste_data.csv"
+
+    # Load and split data
+    X_train, X_test, y_train, y_test = load_data(file_path)
+    
+    # Train model
+    model = train_model(X_train, y_train)
+    
+    # Evaluate model
+    evaluate_model(model, X_test, y_test)
+    
+    # Example Prediction
+    sample_input = [4.5, 2.1, 0.7]  # Replace with actual sensor input data (weight, volume, moisture)
+    loaded_model = load('waste_classifier_model.joblib')
+    print("Predicted Waste Type:", predict_waste_type(loaded_model, sample_input))
